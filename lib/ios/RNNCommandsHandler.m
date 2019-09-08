@@ -10,6 +10,7 @@
 #import "React/RCTI18nUtil.h"
 #import "UIViewController+LayoutProtocol.h"
 #import "RNNLayoutManager.h"
+#import "RNNUtils.h"
 
 static NSString* const setRoot	= @"setRoot";
 static NSString* const setStackRoot	= @"setStackRoot";
@@ -113,6 +114,11 @@ static NSString* const setDefaultOptions	= @"setDefaultOptions";
 - (void)push:(NSString*)componentId commandId:(NSString*)commandId layout:(NSDictionary*)layout completion:(RNNTransitionCompletionBlock)completion rejection:(RCTPromiseRejectBlock)rejection {
 	[self assertReady];
 	
+	// Recursively reset scrolls on old view before pushing to a new view 
+	// Credit: https://github.com/minhloi/react-native-navigation/commit/108e9b3b2d489916c92d3e9a6b0d461759915ea1
+	UIViewController *topViewController = [RNNUtils getTopViewController];
+	[RNNUtils stopDescendentScrollViews: topViewController.view];
+
 	UIViewController *newVc = [_controllerFactory createLayout:layout];
 	UIViewController *fromVC = [RNNLayoutManager findComponentForId:componentId];
 	
@@ -253,6 +259,11 @@ static NSString* const setDefaultOptions	= @"setDefaultOptions";
 - (void)showModal:(NSDictionary*)layout commandId:(NSString *)commandId completion:(RNNTransitionWithComponentIdCompletionBlock)completion {
 	[self assertReady];
 	
+	// Recursively reset scrolls on old view before displaying new view as modal 
+	// Credit: https://github.com/minhloi/react-native-navigation/commit/108e9b3b2d489916c92d3e9a6b0d461759915ea1
+	UIViewController *topViewController = [RNNUtils getTopViewController];
+	[RNNUtils stopDescendentScrollViews: topViewController.view];
+
 	UIViewController *newVc = [_controllerFactory createLayout:layout];
 	
 	[newVc renderTreeAndWait:[newVc.resolveOptions.animations.showModal.waitForRender getWithDefaultValue:NO] perform:^{

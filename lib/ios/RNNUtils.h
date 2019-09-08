@@ -7,5 +7,8 @@
 +(BOOL)getBoolOrKey:(NSDictionary*)dict withKey:(NSString*)key withDefault:(BOOL)defaultResult;
 +(id)getObjectOrKey:(NSDictionary*)dict withKey:(NSString*)key withDefault:(id)defaultResult;
 +(NSNumber*)getCurrentTimestamp;
++(void)stopDescendentScrollViews: (UIView*) view;
++(UIViewController*) getTopViewController;
++(UIViewController*) getTopViewController: (UIViewController*)rootViewController;
 
 @end

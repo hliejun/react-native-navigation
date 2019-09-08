@@ -1,4 +1,5 @@
 #import "RNNTabBarController.h"
+#import "RNNUtils.h"
 
 @implementation RNNTabBarController {
 	NSUInteger _currentTabIndex;
@@ -52,6 +53,13 @@
 - (void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController {
 	[self.eventEmitter sendBottomTabSelected:@(tabBarController.selectedIndex) unselected:@(_currentTabIndex)];
 	_currentTabIndex = tabBarController.selectedIndex;
+}
+
+- (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectViewController:(nonnull UIViewController *)viewController {
+ 	// Recursively reset scrolls on old view before changing tabs
+	// Credit: https://github.com/minhloi/react-native-navigation/commit/108e9b3b2d489916c92d3e9a6b0d461759915ea1
+	[RNNUtils stopDescendentScrollViews: tabBarController.selectedViewController.view];
+	return YES;
 }
 
 @end
